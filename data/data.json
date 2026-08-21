@@ -1,17 +1,17 @@
 {
   "meta": {
-    "generatedAt": "2026-08-21T11:52:36Z",
+    "generatedAt": "2026-08-21T12:36:54Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 748,
     "byType": {
-      "Ergebnisbericht": 242,
+      "Hinweis": 40,
+      "actuview": 425,
       "GitHub-Material": 19,
       "Use Case": 5,
-      "actuview": 425,
-      "Hinweis": 40,
-      "Best Notebook Award": 5,
       "Richtlinie": 16,
-      "Data Science Challenge": 4
+      "Data Science Challenge": 4,
+      "Ergebnisbericht": 242,
+      "Best Notebook Award": 5
     }
   },
   "items": [
