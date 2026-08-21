@@ -12,6 +12,9 @@ Eine durchsuchbare, nach Themen geordnete Übersicht aus drei Quellen rund um di
 Kein offizielles DAV-Angebot — ein privates Hilfsmittel, das ausschließlich öffentlich zugängliche
 Schnittstellen ausliest und daraus eine schnell durchsuchbare Seite baut.
 
+📋 [Entwicklungsprotokoll](docs/entwicklungsprotokoll.html) — wie dieses Projekt Schritt für Schritt
+mit Claude Code entstanden ist, inkl. Token-/Kostenauswertung der Entwicklungssitzung.
+
 ## Wie es funktioniert
 
 ```
@@ -75,9 +78,9 @@ und deployt die Seite neu. Kein manueller Aufwand nötig.
   statt auf eine (anonym nicht auflösbare) Detailseite.
 - actuview-Vorträge und deren PDF-Folien erfordern zum Ansehen ein (kostenloses) actuview-Konto;
   diese Seite übernimmt keine Videos oder PDFs, sondern nur Metadaten und einen Link dorthin.
-- Die Zuordnung „AG-Mitglieder“ in der Suche erfolgt indirekt über actuview-Sprecher:innen, nicht
-  über eine offizielle DAV-Mitgliederliste — viele Vortragende sind Mitglieder der jeweiligen
-  Arbeitsgruppe/des Ausschusses, aber nicht zwingend alle.
+- Die Suche nach „Vortragenden“ erfolgt über actuview-Sprecher:innen, nicht über eine offizielle
+  DAV-Mitgliederliste — viele Vortragende sind Mitglieder der jeweiligen Arbeitsgruppe/des
+  Ausschusses, aber nicht zwingend alle.
 - Die Kurzbeschreibungen sind automatisiert erzeugt und können ungenau sein — im Zweifel gilt immer
   das Originaldokument/-video.
 

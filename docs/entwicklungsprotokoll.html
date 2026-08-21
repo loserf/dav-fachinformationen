@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Entwicklungsprotokoll — DAV Fachinformationen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Wie diese Seite entstand: Ablauf, Quellen, Entscheidungen und eine Token-/Kostenauswertung der KI-unterstützten Entwicklung.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef0ec; --surface:#ffffff; --surface-alt:#f6f7f3;
+    --ink:#16233f; --ink-soft:#565f78; --ink-faint:#8890a3; --border:#dadfdb;
+    --accent:#0f6659; --accent-ink:#0a473e; --accent-soft:#e2eeea;
+    --new:#b8621c; --new-soft:#f8e7d6;
+    --shadow: 0 1px 2px rgba(22,35,63,.06), 0 8px 24px -12px rgba(22,35,63,.18);
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f141d; --surface:#171e2a; --surface-alt:#1c2431;
+      --ink:#e8ebf1; --ink-soft:#a2acc4; --ink-faint:#717d99; --border:#2a3244;
+      --accent:#38c9a8; --accent-ink:#bdf3e3; --accent-soft:#132b27;
+      --new:#e6a559; --new-soft:#332512;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+      --bg:#0f141d; --surface:#171e2a; --surface-alt:#1c2431;
+      --ink:#e8ebf1; --ink-soft:#a2acc4; --ink-faint:#717d99; --border:#2a3244;
+      --accent:#38c9a8; --accent-ink:#bdf3e3; --accent-soft:#132b27;
+      --new:#e6a559; --new-soft:#332512;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size:16px; line-height:1.6;
+  }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  h1,h2,h3{ font-family:"Fraunces", Georgia, serif; text-wrap:balance; margin:0 0 .4em; color:var(--ink); }
+  a{ color:var(--accent-ink); }
+  main{ max-width:800px; margin:0 auto; padding:48px 22px 90px; }
+
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent-ink); font-weight:500; display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .dot{ width:6px;height:6px;border-radius:50%;background:var(--accent); display:inline-block; }
+  h1{ font-size:clamp(28px,4.5vw,38px); font-weight:600; margin-top:8px; }
+  .lede{ color:var(--ink-soft); font-size:16.5px; max-width:62ch; }
+
+  .meta-row{ display:flex; gap:10px; flex-wrap:wrap; margin:22px 0 8px; }
+  .pill{ background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:6px 13px; font-size:12.5px; color:var(--ink-soft); box-shadow:var(--shadow); }
+  .pill b{ color:var(--ink); font-family:"IBM Plex Mono",monospace; }
+
+  section{ margin-top:52px; }
+  section > h2{ font-size:22px; font-weight:600; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:18px; }
+
+  .phase{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 20px; box-shadow:var(--shadow); margin-bottom:14px;
+  }
+  .phase h3{ font-size:16.5px; font-weight:600; display:flex; align-items:baseline; gap:10px; }
+  .phase .num{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent-ink); background:var(--accent-soft); padding:2px 8px; border-radius:5px; }
+  .phase ul{ margin:10px 0 0; padding-left:20px; color:var(--ink-soft); font-size:14.5px; }
+  .phase li{ margin-bottom:5px; }
+  .phase .outcome{ margin-top:10px; font-size:13.5px; color:var(--ink); background:var(--surface-alt); border-radius:7px; padding:8px 12px; }
+  .phase .outcome b{ color:var(--accent-ink); }
+
+  table{ width:100%; border-collapse:collapse; font-size:14px; }
+  th,td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--border); }
+  th{ font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); font-weight:500; }
+  td.num, th.num{ text-align:right; font-family:"IBM Plex Mono",monospace; }
+  tr:last-child td{ border-bottom:none; }
+  tr.total td{ font-weight:600; border-top:2px solid var(--border); }
+  .table-wrap{ overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:6px 16px; box-shadow:var(--shadow); }
+
+  .chart-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); }
+  .bar-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; font-size:13px; }
+  .bar-label{ width:230px; flex-shrink:0; color:var(--ink-soft); }
+  .bar-track{ flex:1; background:var(--surface-alt); border-radius:5px; height:20px; position:relative; overflow:hidden; }
+  .bar-fill{ background:var(--accent); height:100%; border-radius:5px; }
+  .bar-value{ width:76px; flex-shrink:0; text-align:right; font-family:"IBM Plex Mono",monospace; color:var(--ink); }
+
+  .callout{
+    background:var(--accent-soft); border:1px solid var(--accent); border-radius:var(--radius);
+    padding:16px 18px; font-size:14px; color:var(--accent-ink); margin-top:16px;
+  }
+  .callout b{ font-weight:600; }
+
+  .note{ font-size:13px; color:var(--ink-faint); margin-top:10px; }
+
+  code{ font-family:"IBM Plex Mono",monospace; background:var(--surface-alt); padding:1px 6px; border-radius:4px; font-size:.92em; }
+
+  footer{
+    max-width:800px; margin:60px auto 0; padding:22px 22px 40px;
+    border-top:1px solid var(--border); color:var(--ink-faint); font-size:12px; line-height:1.7;
+  }
+  footer a{ color:var(--ink-soft); }
+
+  @media (max-width:600px){
+    .bar-label{ width:130px; font-size:11.5px; }
+    .bar-value{ width:58px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="eyebrow"><span class="dot"></span>Automatisiert erstelltes Protokoll</div>
+  <h1>Wie diese Seite entstand</h1>
+  <p class="lede">
+    Dieses Repository und die zugehörige Website wurden in einer mehrteiligen Sitzung mit Claude Code
+    (Anthropic) aufgebaut. Dieses Dokument fasst den Ablauf, die getroffenen Entscheidungen und den
+    Ressourcenverbrauch zusammen — als Ergänzung zur <a href="../README.md">README</a>, nicht als
+    wörtliches Gesprächsprotokoll. Aus Sicherheits- und Datenschutzgründen wurden alle Autorisierungscodes,
+    Tokens und lokalen Dateipfade entfernt oder durch relative Pfade im Repository ersetzt.
+  </p>
+
+  <div class="meta-row">
+    <span class="pill">Werkzeug: <b>Claude Code</b> (Claude Sonnet 5)</span>
+    <span class="pill">Sitzungsdauer: <b>4 Anfragen</b></span>
+    <span class="pill">Ergebnis: <b>748 Einträge</b>, 3 Quellen</span>
+  </div>
+
+  <section>
+    <h2>Ausgangsauftrag</h2>
+    <p style="color:var(--ink-soft)">
+      Ziel war eine benutzerfreundliche, nach Themen geordnete Übersicht aller Fachinformationen der
+      Deutschen Aktuarvereinigung (Ergebnisbericht, Hinweis, Richtlinie, Use Case), mit Vorschlag und
+      Umsetzung einer kostenlosen, automatisch aktuell gehaltenen Bereitstellung. In zwei weiteren
+      Schritten wurde der Umfang auf GitHub-Materialien der DAV-Organisation und auf Konferenzvorträge
+      der Plattform actuview.com ausgeweitet.
+    </p>
+  </section>
+
+  <section>
+    <h2>Ablauf in vier Phasen</h2>
+
+    <div class="phase">
+      <h3><span class="num">1</span> Datenquelle erschließen &amp; Grundmodell</h3>
+      <ul>
+        <li>Die öffentliche Solr-Suchschnittstelle hinter <code>aktuar.de/de/wissen/fachinformationen</code> identifiziert und ausgelesen (kein Login nötig für Titel/Datum/Thema/Kurzbeschreibung)</li>
+        <li>311 Rohdatensätze abgerufen, auf 299 eindeutige Dokumente dedupliziert (mehrfach publizierte Fassungen zusammengeführt, ältere Fassungen verlinkt)</li>
+        <li>Kurzbeschreibungen automatisiert aus dem „Überblick“-Absatz extrahiert, verantwortliches Gremium per Texterkennung ermittelt</li>
+        <li>Interaktive Übersichtsseite gebaut: Suche, Filter nach Art/Thema, „Neu“-Kennzeichnung, helles &amp; dunkles Farbschema</li>
+        <li>Als Artifact-Vorschau veröffentlicht; Projekt als eigenständiges, versioniertes Repository mit Update-Skript und wöchentlichem Automatisierungs-Workflow angelegt</li>
+      </ul>
+      <div class="outcome"><b>Ergebnis:</b> lauffähige Seite mit 299 Einträgen, bereit zur Veröffentlichung.</div>
+    </div>
+
+    <div class="phase">
+      <h3><span class="num">2</span> Bereitstellung auf GitHub</h3>
+      <ul>
+        <li>Öffentliches Repository über die GitHub-Kommandozeile angelegt und verknüpft</li>
+        <li>Für das Hochladen der Automatisierungs-Workflow-Datei war ein zusätzlicher Berechtigungsumfang nötig — der Nutzer hat diesen im Browser über den GitHub-eigenen Geräte-Autorisierungsablauf freigegeben</li>
+        <li>GitHub Pages aktiviert (Quelle: GitHub Actions)</li>
+        <li>Erster automatischer Durchlauf beobachtet und verifiziert</li>
+      </ul>
+      <div class="outcome"><b>Ergebnis:</b> Seite live und kostenlos erreichbar, wöchentliche Aktualisierung eingerichtet.</div>
+    </div>
+
+    <div class="phase">
+      <h3><span class="num">3</span> Funktionale Erweiterung um zwei weitere Quellen</h3>
+      <ul>
+        <li>25 Repositories der GitHub-Organisation der DAV analysiert und in „GitHub-Material“, „Best Notebook Award“ und „Data Science Challenge“ eingeteilt</li>
+        <li>4 Repositories mit bereits vorhandenen Fachinformationen inhaltlich abgeglichen und dort als Querverweis ergänzt</li>
+        <li>Die Video-Schnittstelle von actuview.com ohne Login erschlossen (Veranstaltungen, Vorträge, Sprecher:innen, Fachgruppen, Foliendownload-Status)</li>
+        <li>425 Vorträge aus 13 Tagungen (DAV/DGVFM Annual &amp; Autumn Meeting, ab 2020) parallelisiert abgerufen und aufbereitet</li>
+        <li>Thema „Actuarial Data Science“ in „Actuarial Data Science / AI“ umbenannt; Suche um Vortragende erweitert</li>
+        <li>Mehrere Datenqualitäts-Fehler behoben (u. a. eine Eigenheit von PowerShell, bei der einelementige Ergebnislisten aus <code>if/else</code>-Zuweisungen unbeabsichtigt zu Einzelwerten „entrollt“ wurden)</li>
+        <li>Alles zu einer einzigen Abruf-Pipeline zusammengeführt, erneut veröffentlicht und der automatische Durchlauf verifiziert</li>
+      </ul>
+      <div class="outcome"><b>Ergebnis:</b> 748 Einträge aus drei Quellen, vollständig automatisiert aktuell gehalten.</div>
+    </div>
+
+    <div class="phase">
+      <h3><span class="num">4</span> Feinschliff &amp; Dokumentation</h3>
+      <ul>
+        <li>Begriff „AG-Mitglieder“ im Suchfeld und in Erläuterungstexten durch „Vortragende“ ersetzt</li>
+        <li>Dieses Entwicklungsprotokoll erstellt und veröffentlicht</li>
+        <li>Token- und Kostenauswertung der Sitzung erstellt (siehe unten)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Kein separater Ausführungsplan</h2>
+    <p style="color:var(--ink-soft); font-size:14.5px;">
+      Für diese Aufgabe wurde kein formaler, vorab bestätigter Plan (Claude Codes „Plan-Modus“) erzeugt —
+      die Umsetzung erfolgte iterativ direkt im Gespräch. Die vier Phasen oben sind eine rückblickende,
+      strukturierte Zusammenfassung des tatsächlichen Vorgehens und ersetzen einen solchen Plan für
+      Dokumentationszwecke.
+    </p>
+  </section>
+
+  <section>
+    <h2>Technische Eckdaten</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><td>Datenquellen</td><td>aktuar.de · github.com/DeutscheAktuarvereinigung · actuview.com</td></tr>
+        <tr><td>Einträge gesamt</td><td class="mono">748</td></tr>
+        <tr><td>Technologie</td><td>Statisches HTML/JavaScript ohne Build-Schritt, PowerShell-Abrufskript, GitHub Actions, GitHub Pages</td></tr>
+        <tr><td>Betriebskosten</td><td>0 € / Monat (öffentliches Repository: GitHub Pages und GitHub Actions im Normalumfang sind kostenlos)</td></tr>
+        <tr><td>Skript</td><td><code>scripts/update-data.ps1</code></td></tr>
+        <tr><td>Automatisierung</td><td><code>.github/workflows/update-data.yml</code> — wöchentlich sowie bei jedem Push</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="kosten">
+    <h2>Token- und Kostenauswertung dieser Sitzung</h2>
+    <p style="color:var(--ink-soft); font-size:14.5px;">
+      KI-Assistenten wie Claude Code lesen bei jeder Gesprächsrunde den bisherigen Verlauf erneut ein,
+      damit der Kontext erhalten bleibt. Ein Preisnachlass-Mechanismus („Prompt Caching“) sorgt dafür,
+      dass dieses wiederholte Einlesen nur etwa ein Zehntel des regulären Preises kostet. Die folgenden
+      Zahlen sind daher weit größer als der eigentliche „neue“ Text der Sitzung, weil sie diesen
+      wiederholten Kontext mitzählen — nur eben stark rabattiert.
+    </p>
+
+    <div class="chart-card" style="margin-top:18px;">
+      <div class="bar-row"><div class="bar-label">Konversation &amp; Systemkontext</div><div class="bar-track"><div class="bar-fill" style="width:100.0%"></div></div><div class="bar-value">$19.78</div></div>
+<div class="bar-row"><div class="bar-label">Datenpipeline (PowerShell/Bash)</div><div class="bar-track"><div class="bar-fill" style="width:40.3%"></div></div><div class="bar-value">$7.97</div></div>
+<div class="bar-row"><div class="bar-label">Dateioperationen (Skripte, HTML, JSON)</div><div class="bar-track"><div class="bar-fill" style="width:33.7%"></div></div><div class="bar-value">$6.66</div></div>
+<div class="bar-row"><div class="bar-label">Browser-Recherche (aktuar.de, actuview.com)</div><div class="bar-track"><div class="bar-fill" style="width:15.1%"></div></div><div class="bar-value">$2.99</div></div>
+<div class="bar-row"><div class="bar-label">Web-Recherche (WebFetch)</div><div class="bar-track"><div class="bar-fill" style="width:6.3%"></div></div><div class="bar-value">$1.24</div></div>
+<div class="bar-row"><div class="bar-label">Skill-Aufrufe</div><div class="bar-track"><div class="bar-fill" style="width:1.3%"></div></div><div class="bar-value">$0.27</div></div>
+<div class="bar-row"><div class="bar-label">Artifact-Veröffentlichung</div><div class="bar-track"><div class="bar-fill" style="width:1.0%"></div></div><div class="bar-value">$0.19</div></div>
+<div class="bar-row"><div class="bar-label">Sonstiges</div><div class="bar-track"><div class="bar-fill" style="width:0.8%"></div></div><div class="bar-value">$0.16</div></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:18px;">
+      <table>
+        <thead>
+          <tr><th>Themenbereich</th><th class="num">Werkzeug-Aufrufe</th><th class="num">Tokens (gesamt, gerundet)</th><th class="num">Kosten</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Konversation &amp; Systemkontext</td><td class="num">259</td><td class="num">69.5 Mio.</td><td class="num">$19.78</td></tr>
+          <tr><td>Datenpipeline (PowerShell/Bash)</td><td class="num">117</td><td class="num">32.0 Mio.</td><td class="num">$7.97</td></tr>
+          <tr><td>Dateioperationen (Skripte, HTML, JSON)</td><td class="num">85</td><td class="num">25.9 Mio.</td><td class="num">$6.66</td></tr>
+          <tr><td>Browser-Recherche (aktuar.de, actuview.com)</td><td class="num">65</td><td class="num">12.8 Mio.</td><td class="num">$2.99</td></tr>
+          <tr><td>Web-Recherche (WebFetch)</td><td class="num">5</td><td class="num">1.5 Mio.</td><td class="num">$1.24</td></tr>
+          <tr><td>Skill-Aufrufe</td><td class="num">3</td><td class="num">1.0 Mio.</td><td class="num">$0.27</td></tr>
+          <tr><td>Artifact-Veröffentlichung</td><td class="num">3</td><td class="num">0.8 Mio.</td><td class="num">$0.19</td></tr>
+          <tr><td>Sonstiges</td><td class="num">2</td><td class="num">0.5 Mio.</td><td class="num">$0.16</td></tr>
+          <tr class="total"><td>Gesamt</td><td class="num">539</td><td class="num">144.0 Mio.</td><td class="num">$39.26</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <b>Berechnete Kosten dieser Sitzung nach API-Preisliste: ca. $39 (US-Dollar)</b><br>
+      Berechnet zu den offiziellen API-Listenpreisen von Claude Sonnet 5 (Stand: 21.08.2026) —
+      $2 / Mio. Eingabe-Tokens, $10 / Mio. Ausgabe-Tokens, $4 / Mio. Tokens für einstündiges
+      Zwischenspeichern, $0.20 / Mio. Tokens beim Lesen aus dem Zwischenspeicher — unabhängig
+      davon, über welchen Zugang (Abo oder direkte API-Nutzung) diese Sitzung tatsächlich lief.
+    </div>
+    <p class="note">
+      Die Aufteilung nach Themenbereich ist eine Annäherung: Jede Gesprächsrunde wurde dem Werkzeugtyp
+      zugeordnet, den sie unmittelbar ausgeführt hat (z. B. Datenabruf-Skript, Datei-Bearbeitung,
+      Browser-Recherche). Reine Text-/Planungsrunden ohne Werkzeugaufruf fallen unter „Konversation &amp;
+      Systemkontext“ und machen wegen des wiederholten Kontext-Einlesens den größten Anteil aus.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  Zurück zur <a href="../README.md">README</a> · Live-Seite: <a href="https://loserf.github.io/dav-fachinformationen/">loserf.github.io/dav-fachinformationen</a><br>
+  Dieses Protokoll ist automatisiert aus dem Entwicklungsverlauf zusammengefasst und kann Ungenauigkeiten enthalten.
+</footer>
+
+</body>
+</html>
