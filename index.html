@@ -170,13 +170,25 @@
   .badge.type-Hinweis{ background:#e7ecf5; color:#2f4e8f; }
   .badge.type-Richtlinie{ background:#f0e6f5; color:#7a3f96; }
   .badge.type-UseCase{ background:#fdeee0; color:#9a4e12; }
+  .badge.type-actuview{ background:#dff2f7; color:#0e6c85; }
+  .badge.type-GitHub-Material{ background:#eceef1; color:#3b4453; }
+  .badge.type-BestNotebookAward{ background:#faf1d9; color:#8a6a12; }
+  .badge.type-DataScienceChallenge{ background:#e9e7fb; color:#4c3fa8; }
   .badge.new{ background:var(--new-soft); color:var(--new); }
   .badge.locked{ background:var(--locked-soft); color:var(--locked); }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]) .badge.type-Hinweis{ background:#1c2740; color:#9db3ea; }
     :root:not([data-theme="light"]) .badge.type-Richtlinie{ background:#2a1f36; color:#d4a9ec; }
     :root:not([data-theme="light"]) .badge.type-UseCase{ background:#3a2818; color:#f2b784; }
+    :root:not([data-theme="light"]) .badge.type-actuview{ background:#113540; color:#7fd4ea; }
+    :root:not([data-theme="light"]) .badge.type-GitHub-Material{ background:#232a35; color:#b7c0cf; }
+    :root:not([data-theme="light"]) .badge.type-BestNotebookAward{ background:#3a2f10; color:#e8c565; }
+    :root:not([data-theme="light"]) .badge.type-DataScienceChallenge{ background:#241f42; color:#b3a8f0; }
   }
+  :root[data-theme="dark"] .badge.type-actuview{ background:#113540; color:#7fd4ea; }
+  :root[data-theme="dark"] .badge.type-GitHub-Material{ background:#232a35; color:#b7c0cf; }
+  :root[data-theme="dark"] .badge.type-BestNotebookAward{ background:#3a2f10; color:#e8c565; }
+  :root[data-theme="dark"] .badge.type-DataScienceChallenge{ background:#241f42; color:#b3a8f0; }
   :root[data-theme="dark"] .badge.type-Hinweis{ background:#1c2740; color:#9db3ea; }
   :root[data-theme="dark"] .badge.type-Richtlinie{ background:#2a1f36; color:#d4a9ec; }
   :root[data-theme="dark"] .badge.type-UseCase{ background:#3a2818; color:#f2b784; }
@@ -195,7 +207,7 @@
   .tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
   .tag{ font-size:11px; color:var(--ink-faint); background:var(--surface-alt); border:1px solid var(--border); padding:2px 7px; border-radius:999px; }
 
-  .card-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:4px; font-size:12px; }
+  .card-foot{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px 14px; margin-top:4px; font-size:12px; }
   .source-link{ color:var(--accent-ink); text-decoration:none; }
   .source-link:hover{ text-decoration:underline; }
   .prev-versions{ color:var(--ink-faint); }
@@ -223,7 +235,7 @@
   <div class="top-inner">
     <div class="eyebrow"><span class="dot"></span>Inoffizielle Übersicht · nicht von der DAV betrieben</div>
     <h1 class="title">DAV Fachinformationen</h1>
-    <p class="subtitle">Ergebnisberichte, Hinweise, Richtlinien und Use Cases der Deutschen Aktuarvereinigung — durchsuchbar und nach Themen geordnet, automatisch abgeglichen mit <a href="https://aktuar.de/de/wissen/fachinformationen/" target="_blank" rel="noopener">aktuar.de</a>.</p>
+    <p class="subtitle">Ergebnisberichte, Hinweise, Richtlinien, Use Cases, GitHub-Materialien und actuview-Vorträge der Deutschen Aktuarvereinigung — durchsuchbar und nach Themen geordnet, automatisch abgeglichen mit <a href="https://aktuar.de/de/wissen/fachinformationen/" target="_blank" rel="noopener">aktuar.de</a>, <a href="https://github.com/DeutscheAktuarvereinigung" target="_blank" rel="noopener">GitHub</a> und <a href="https://actuview.com/" target="_blank" rel="noopener">actuview.com</a>.</p>
     <div class="stats" id="stats"></div>
   </div>
 </header>
@@ -231,7 +243,7 @@
 <div class="controls">
   <div class="controls-panel">
     <div class="search-row">
-      <input type="search" id="search" placeholder="Suche nach Titel, Stichwort, Gremium …" autocomplete="off">
+      <input type="search" id="search" placeholder="Suche nach Titel, Stichwort, Gremium, AG-Mitgliedern …" autocomplete="off">
       <span class="result-count" id="resultCount"></span>
     </div>
     <div class="chip-row" id="typeChips"></div>
@@ -270,7 +282,12 @@
       it.typeList = it.type.split(" / ");
     });
 
-    var types = ["Ergebnisbericht","Hinweis","Richtlinie","Use Case"];
+    var preferredTypeOrder = ["Ergebnisbericht","Hinweis","Richtlinie","Use Case","actuview","GitHub-Material","Best Notebook Award","Data Science Challenge"];
+    var typesSeen = new Set();
+    items.forEach(function(i){ i.typeList.forEach(function(t){ typesSeen.add(t); }); });
+    var types = preferredTypeOrder.filter(function(t){ return typesSeen.has(t); });
+    typesSeen.forEach(function(t){ if (types.indexOf(t) === -1) types.push(t); });
+
     var themes = Array.from(new Set(items.map(function(i){return i.theme || "Sonstiges";})));
     // order themes by item count desc
     var themeCounts = {};
@@ -355,7 +372,7 @@
       }
       if (state.theme && (it.theme||"Sonstiges") !== state.theme) return false;
       if (state.q){
-        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")).toLowerCase();
+        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")+" "+(it.authors||[]).join(" ")+" "+(it.event||"")).toLowerCase();
         if (hay.indexOf(state.q) === -1) return false;
       }
       return true;
@@ -404,32 +421,48 @@
       if (it.isNew) badges += '<span class="badge new">✦ Neu</span>';
       if (it.locked) badges += '<span class="badge locked">🔒 Mitglieder</span>';
 
-      var committee = it.committee ? '<div class="committee"><b>Gremium:</b> '+esc(it.committee)+'</div>' : '';
       var tags = (it.tags && it.tags.length) ? '<div class="tags">'+it.tags.slice(0,6).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join("")+'</div>' : '';
 
-      var linkLabel = it.hasDirectLink ? 'Zur Quelle auf aktuar.de' : 'Zur Fachinformationen-Suche (Login erforderlich)';
+      var isTalk = it.typeList.indexOf('actuview') > -1;
+
+      var meta = "";
+      if (isTalk){
+        if (it.event) meta += '<div class="committee"><b>Tagung:</b> '+esc(it.event)+'</div>';
+        if (it.authors && it.authors.length) meta += '<div class="committee"><b>Autor(en):</b> '+esc(it.authors.join(', '))+'</div>';
+        if (it.committee) meta += '<div class="committee"><b>Fachgruppe:</b> '+esc(it.committee)+'</div>';
+        meta += '<div class="committee"><b>Vortragsfolien (PDF):</b> '+(it.pdfAvailable ? 'verfügbar (Login auf actuview.com erforderlich)' : 'nicht hinterlegt')+'</div>';
+      } else {
+        if (it.committee) meta += '<div class="committee"><b>Gremium:</b> '+esc(it.committee)+'</div>';
+      }
+
+      var linkLabel = isTalk ? 'Zum Vortrag auf actuview.com' : (it.hasDirectLink ? 'Zur Quelle auf aktuar.de' : 'Zur Fachinformationen-Suche (Login erforderlich)');
       var prev = "";
       if (it.previousVersions && it.previousVersions.length){
         prev = '<details class="prev-versions"><summary>'+it.previousVersions.length+' frühere Fassung(en)</summary>' +
           it.previousVersions.map(function(v){ return '<div><a class="source-link" href="'+esc(v.url)+'" target="_blank" rel="noopener">'+esc(v.date)+'</a></div>'; }).join("") +
           '</details>';
       }
+      var githubLink = it.githubUrl ? '<a class="source-link" href="'+esc(it.githubUrl)+'" target="_blank" rel="noopener">GitHub-Material ↗</a>' : '';
 
       return '<article class="card">'+
         '<div class="card-top">'+badges+'<span class="card-date mono">'+esc(it.date)+'</span></div>'+
         '<h3><a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+esc(it.title)+'<span class="ext">↗</span></a></h3>'+
-        committee+
+        meta+
         '<p class="desc">'+esc(it.description)+'</p>'+
         tags+
-        '<div class="card-foot"><a class="source-link" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+linkLabel+'</a>'+prev+'</div>'+
+        '<div class="card-foot"><a class="source-link" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+linkLabel+'</a>'+githubLink+prev+'</div>'+
         '</article>';
     }
 
     document.getElementById('footer').innerHTML =
-      'Stand der Daten: <span class="mono">'+esc(meta.generatedAt)+'</span> · Quelle: <a href="'+esc(meta.source)+'" target="_blank" rel="noopener">aktuar.de/de/wissen/fachinformationen</a> · '+
-      'Kurzbeschreibungen sind automatisiert aus den öffentlichen „Überblick“-Absätzen der DAV extrahiert und können ungenau sein — im Zweifel gilt das Originaldokument. '+
-      'Diese Seite ist ein privates, inoffizielles Hilfsmittel ohne Verbindung zur Deutschen Aktuarvereinigung e.V.; alle Inhalte und Rechte liegen bei der DAV. '+
-      'Als Mitglieder-Dokument markierte Einträge sind nur nach Login auf aktuar.de vollständig einsehbar.';
+      'Stand der Daten: <span class="mono">'+esc(meta.generatedAt)+'</span> · Quellen: '+
+      '<a href="https://aktuar.de/de/wissen/fachinformationen/" target="_blank" rel="noopener">aktuar.de</a>, '+
+      '<a href="https://github.com/DeutscheAktuarvereinigung" target="_blank" rel="noopener">GitHub/DeutscheAktuarvereinigung</a>, '+
+      '<a href="https://actuview.com/" target="_blank" rel="noopener">actuview.com</a>. '+
+      'Kurzbeschreibungen sind automatisiert aus den öffentlichen „Überblick“-Absätzen bzw. Vortragsbeschreibungen extrahiert und können ungenau sein — im Zweifel gilt das Originaldokument/-video. '+
+      'Diese Seite ist ein privates, inoffizielles Hilfsmittel ohne Verbindung zur Deutschen Aktuarvereinigung e.V.; alle Inhalte und Rechte liegen bei der DAV bzw. actuview. '+
+      'Als Mitglieder-Dokument markierte Einträge sind nur nach Login auf aktuar.de vollständig einsehbar; actuview-Vorträge und deren PDF-Folien erfordern ein (kostenloses) actuview-Konto. '+
+      'Die Zuordnung von AG-Mitgliedern erfolgt indirekt über die als Sprecher:innen auf actuview gehaltenen Vorträge, nicht über eine offizielle Mitgliederliste.';
   }
 
   function esc(s){

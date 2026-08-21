@@ -1,10 +1,16 @@
 # DAV Fachinformationen — Übersicht
 
-Eine durchsuchbare, nach Themen geordnete Übersicht aller **Ergebnisberichte**, **Hinweise**,
-**Richtlinien** und **Use Cases** der [Deutschen Aktuarvereinigung e.V. (DAV)](https://aktuar.de/de/wissen/fachinformationen/).
+Eine durchsuchbare, nach Themen geordnete Übersicht aus drei Quellen rund um die
+[Deutsche Aktuarvereinigung e.V. (DAV)](https://aktuar.de/de/wissen/fachinformationen/):
 
-Kein offizielles DAV-Angebot — ein privates Hilfsmittel, das die öffentlich zugängliche
-Such-Schnittstelle von aktuar.de ausliest und daraus eine schnell durchsuchbare Seite baut.
+- **aktuar.de**: Ergebnisberichte, Hinweise, Richtlinien, Use Cases
+- **[github.com/DeutscheAktuarvereinigung](https://github.com/DeutscheAktuarvereinigung)**: GitHub-Material,
+  Best Notebook Award, Data Science Challenge
+- **[actuview.com](https://actuview.com/)**: Vorträge des DAV/DGVFM Annual Meeting und Autumn Meeting ab 2020
+  (Titel, Autor:innen, Tagung, Fachgruppe, PDF-Folien-Verfügbarkeit)
+
+Kein offizielles DAV-Angebot — ein privates Hilfsmittel, das ausschließlich öffentlich zugängliche
+Schnittstellen ausliest und daraus eine schnell durchsuchbare Seite baut.
 
 ## Wie es funktioniert
 
@@ -12,12 +18,14 @@ Such-Schnittstelle von aktuar.de ausliest und daraus eine schnell durchsuchbare 
 scripts/update-data.ps1   →   data/data.json   →   index.html (liest data.json per fetch)
 ```
 
-- **`scripts/update-data.ps1`** fragt die öffentliche Solr-Suche von aktuar.de für die vier
-  Dokumentarten ab, säubert die Rohdaten (HTML-Tags entfernen, Kurzbeschreibung aus dem
-  „Überblick“-Absatz extrahieren, verantwortliches Gremium wo möglich erkennen, doppelte
-  Fassungen desselben Dokuments zusammenführen) und schreibt das Ergebnis nach `data/data.json`.
+- **`scripts/update-data.ps1`** fragt nacheinander die öffentliche Solr-Suche von aktuar.de, die
+  öffentliche GitHub-REST-API der Organisation und die öffentliche Video-API von actuview.com ab,
+  säubert die Rohdaten (HTML-Tags entfernen, Kurzbeschreibung extrahieren, verantwortliches Gremium
+  wo möglich erkennen, doppelte Fassungen desselben Dokuments zusammenführen, GitHub-Material mit
+  passenden Fachinformationen querverlinken) und schreibt das Ergebnis nach `data/data.json`.
 - **`index.html`** ist eine einzelne statische Seite ohne Build-Schritt. Sie lädt `data/data.json`
-  per `fetch` und rendert Filter, Suche und die nach Themen gruppierte Liste im Browser.
+  per `fetch` und rendert Filter, Suche (auch nach actuview-Sprecher:innen, die häufig zugleich
+  DAV-Arbeitsgruppenmitglieder sind) und die nach Themen gruppierte Liste im Browser.
   Das „Neu“-Abzeichen (≤ 4 Monate) wird beim Aufruf clientseitig aus dem aktuellen Datum berechnet,
   muss also nicht bei jedem Lauf neu erzeugt werden.
 
@@ -65,8 +73,13 @@ und deployt die Seite neu. Kein manueller Aufwand nötig.
 - Als **„🔒 Mitglieder“** markierte Dokumente sind auf aktuar.de nur mit DAV-Login vollständig
   abrufbar. Für diese verlinkt die Seite bewusst nur auf die allgemeine Fachinformationen-Suche
   statt auf eine (anonym nicht auflösbare) Detailseite.
+- actuview-Vorträge und deren PDF-Folien erfordern zum Ansehen ein (kostenloses) actuview-Konto;
+  diese Seite übernimmt keine Videos oder PDFs, sondern nur Metadaten und einen Link dorthin.
+- Die Zuordnung „AG-Mitglieder“ in der Suche erfolgt indirekt über actuview-Sprecher:innen, nicht
+  über eine offizielle DAV-Mitgliederliste — viele Vortragende sind Mitglieder der jeweiligen
+  Arbeitsgruppe/des Ausschusses, aber nicht zwingend alle.
 - Die Kurzbeschreibungen sind automatisiert erzeugt und können ungenau sein — im Zweifel gilt immer
-  das Originaldokument.
+  das Originaldokument/-video.
 
 ## Struktur
 
