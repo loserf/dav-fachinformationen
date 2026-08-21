@@ -1,17 +1,17 @@
 {
   "meta": {
-    "generatedAt": "2026-08-21T11:46:25Z",
+    "generatedAt": "2026-08-21T11:52:36Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 748,
     "byType": {
-      "GitHub-Material": 19,
-      "Richtlinie": 16,
-      "actuview": 425,
-      "Best Notebook Award": 5,
-      "Data Science Challenge": 4,
       "Ergebnisbericht": 242,
+      "GitHub-Material": 19,
       "Use Case": 5,
-      "Hinweis": 40
+      "actuview": 425,
+      "Hinweis": 40,
+      "Best Notebook Award": 5,
+      "Richtlinie": 16,
+      "Data Science Challenge": 4
     }
   },
   "items": [
@@ -12267,7 +12267,7 @@
     },
     {
       "type": "Data Science Challenge",
-      "title": "Data Science Challenge 2020 – Betrugserkennung",
+      "title": "Data Science Challenge 2020 – Betrugserkennung (Fraud Detection)",
       "date": "17.11.2020",
       "dateIso": "2020-11-17",
       "theme": "Actuarial Data Science / AI",
