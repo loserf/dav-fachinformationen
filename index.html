@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>DAV Fachinformationen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Durchsuchbare Übersicht aller Ergebnisberichte, Hinweise, Richtlinien und Use Cases der Deutschen Aktuarvereinigung, gruppiert nach Themen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef0ec;
+    --surface:#ffffff;
+    --surface-alt:#f6f7f3;
+    --ink:#16233f;
+    --ink-soft:#565f78;
+    --ink-faint:#8890a3;
+    --border:#dadfdb;
+    --accent:#0f6659;
+    --accent-ink:#0a473e;
+    --accent-soft:#e2eeea;
+    --new:#b8621c;
+    --new-soft:#f8e7d6;
+    --locked:#7c6a4c;
+    --locked-soft:#efe9db;
+    --shadow: 0 1px 2px rgba(22,35,63,.06), 0 8px 24px -12px rgba(22,35,63,.18);
+    --radius: 10px;
+    --focus: #0f6659;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f141d;
+      --surface:#171e2a;
+      --surface-alt:#1c2431;
+      --ink:#e8ebf1;
+      --ink-soft:#a2acc4;
+      --ink-faint:#717d99;
+      --border:#2a3244;
+      --accent:#38c9a8;
+      --accent-ink:#bdf3e3;
+      --accent-soft:#132b27;
+      --new:#e6a559;
+      --new-soft:#332512;
+      --locked:#c8b892;
+      --locked-soft:#2a2618;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+      --focus: #38c9a8;
+    }
+  }
+  :root[data-theme="dark"]{
+      --bg:#0f141d;
+      --surface:#171e2a;
+      --surface-alt:#1c2431;
+      --ink:#e8ebf1;
+      --ink-soft:#a2acc4;
+      --ink-faint:#717d99;
+      --border:#2a3244;
+      --accent:#38c9a8;
+      --accent-ink:#bdf3e3;
+      --accent-soft:#132b27;
+      --new:#e6a559;
+      --new-soft:#332512;
+      --locked:#c8b892;
+      --locked-soft:#2a2618;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+      --focus: #38c9a8;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size:15.5px;
+    line-height:1.5;
+  }
+  ::selection{ background:var(--accent-soft); color:var(--accent-ink); }
+  a{ color:var(--accent-ink); }
+  :focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  h1,h2,h3{ font-family:"Fraunces", Georgia, serif; text-wrap:balance; margin:0; }
+
+  header.top{
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(180deg, var(--bg) 82%, transparent);
+    padding:28px 20px 10px;
+  }
+  .top-inner{ max-width:1180px; margin:0 auto; }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent-ink); font-weight:500;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .dot{ width:6px;height:6px;border-radius:50%;background:var(--accent); display:inline-block; }
+  h1.title{ font-size:clamp(28px, 4vw, 40px); font-weight:600; margin-top:6px; color:var(--ink); }
+  .subtitle{ color:var(--ink-soft); max-width:62ch; margin-top:8px; font-size:14.5px; }
+
+  .stats{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-top:18px;
+  }
+  .stat{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:9px 14px; display:flex; align-items:baseline; gap:7px;
+    box-shadow: var(--shadow);
+  }
+  .stat b{ font-family:"IBM Plex Mono",monospace; font-size:17px; color:var(--ink); }
+  .stat span{ font-size:12px; color:var(--ink-soft); }
+
+  .controls{
+    position:sticky; top:0; z-index:19;
+    max-width:1180px; margin:14px auto 0; padding:12px 20px;
+  }
+  .controls-panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px 16px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .search-row{ display:flex; gap:10px; align-items:center; }
+  .search-row input[type="search"]{
+    flex:1; padding:9px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface-alt); color:var(--ink); font-size:14.5px; font-family:inherit;
+  }
+  .search-row input[type="search"]::placeholder{ color:var(--ink-faint); }
+  .result-count{ font-size:12.5px; color:var(--ink-soft); white-space:nowrap; font-family:"IBM Plex Mono",monospace; }
+
+  .chip-row{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+  .chip-label{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); margin-right:4px; }
+  .chip{
+    border:1px solid var(--border); background:var(--surface-alt); color:var(--ink-soft);
+    border-radius:999px; padding:5px 12px; font-size:12.5px; cursor:pointer;
+    font-family:"IBM Plex Sans", sans-serif; transition:background .12s, color .12s, border-color .12s;
+    user-select:none;
+  }
+  .chip:hover{ border-color:var(--accent); color:var(--ink); }
+  .chip.active{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-ink); font-weight:500; }
+  .chip.toggle.active{ background:var(--new-soft); border-color:var(--new); color:var(--new); }
+
+  main{ max-width:1180px; margin:0 auto; padding:8px 20px 80px; }
+
+  .theme-section{ margin-top:26px; }
+  .theme-head{
+    display:flex; align-items:baseline; gap:10px; cursor:pointer;
+    padding:6px 2px; border-bottom:1px solid var(--border); margin-bottom:14px;
+  }
+  .theme-head h2{ font-size:19px; font-weight:600; color:var(--ink); }
+  .theme-count{ font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-faint); }
+  .theme-caret{ margin-left:auto; color:var(--ink-faint); font-size:13px; transition:transform .15s; }
+  .theme-section.collapsed .theme-caret{ transform:rotate(-90deg); }
+  .theme-section.collapsed .card-grid{ display:none; }
+
+  .card-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(380px,1fr)); gap:12px;
+  }
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px 16px 13px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:7px;
+  }
+  .card-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .badge{
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.03em;
+    padding:3px 8px; border-radius:5px; font-weight:500;
+  }
+  .badge.type-Ergebnisbericht{ background:var(--accent-soft); color:var(--accent-ink); }
+  .badge.type-Hinweis{ background:#e7ecf5; color:#2f4e8f; }
+  .badge.type-Richtlinie{ background:#f0e6f5; color:#7a3f96; }
+  .badge.type-UseCase{ background:#fdeee0; color:#9a4e12; }
+  .badge.new{ background:var(--new-soft); color:var(--new); }
+  .badge.locked{ background:var(--locked-soft); color:var(--locked); }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .badge.type-Hinweis{ background:#1c2740; color:#9db3ea; }
+    :root:not([data-theme="light"]) .badge.type-Richtlinie{ background:#2a1f36; color:#d4a9ec; }
+    :root:not([data-theme="light"]) .badge.type-UseCase{ background:#3a2818; color:#f2b784; }
+  }
+  :root[data-theme="dark"] .badge.type-Hinweis{ background:#1c2740; color:#9db3ea; }
+  :root[data-theme="dark"] .badge.type-Richtlinie{ background:#2a1f36; color:#d4a9ec; }
+  :root[data-theme="dark"] .badge.type-UseCase{ background:#3a2818; color:#f2b784; }
+  .card-date{ margin-left:auto; font-size:12px; color:var(--ink-faint); }
+
+  .card h3{ font-size:15.5px; font-weight:600; line-height:1.35; }
+  .card h3 a{ color:var(--ink); text-decoration:none; }
+  .card h3 a:hover{ color:var(--accent-ink); text-decoration:underline; }
+  .card h3 a .ext{ font-size:11px; opacity:.55; margin-left:3px; }
+
+  .committee{ font-size:12px; color:var(--ink-soft); }
+  .committee b{ font-weight:500; color:var(--ink-soft); }
+
+  .desc{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
+
+  .tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
+  .tag{ font-size:11px; color:var(--ink-faint); background:var(--surface-alt); border:1px solid var(--border); padding:2px 7px; border-radius:999px; }
+
+  .card-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:4px; font-size:12px; }
+  .source-link{ color:var(--accent-ink); text-decoration:none; }
+  .source-link:hover{ text-decoration:underline; }
+  .prev-versions{ color:var(--ink-faint); }
+  .prev-versions summary{ cursor:pointer; }
+
+  .empty-state{ text-align:center; padding:60px 20px; color:var(--ink-soft); }
+
+  footer.site{
+    max-width:1180px; margin:40px auto 0; padding:22px 20px 40px;
+    border-top:1px solid var(--border); color:var(--ink-faint); font-size:12px; line-height:1.7;
+  }
+  footer.site a{ color:var(--ink-soft); }
+
+  @media (max-width:640px){
+    .card-grid{ grid-template-columns:1fr; }
+    .controls{ padding:10px 14px; }
+    header.top{ padding:20px 14px 8px; }
+    main{ padding:8px 14px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="eyebrow"><span class="dot"></span>Inoffizielle Übersicht · nicht von der DAV betrieben</div>
+    <h1 class="title">DAV Fachinformationen</h1>
+    <p class="subtitle">Ergebnisberichte, Hinweise, Richtlinien und Use Cases der Deutschen Aktuarvereinigung — durchsuchbar und nach Themen geordnet, automatisch abgeglichen mit <a href="https://aktuar.de/de/wissen/fachinformationen/" target="_blank" rel="noopener">aktuar.de</a>.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-panel">
+    <div class="search-row">
+      <input type="search" id="search" placeholder="Suche nach Titel, Stichwort, Gremium …" autocomplete="off">
+      <span class="result-count" id="resultCount"></span>
+    </div>
+    <div class="chip-row" id="typeChips"></div>
+    <div class="chip-row" id="themeChips"></div>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<footer class="site" id="footer"></footer>
+
+<script>
+(function(){
+  fetch('./data/data.json')
+    .then(function(r){ return r.json(); })
+    .then(init)
+    .catch(function(err){
+      document.getElementById('main').innerHTML =
+        '<div class="empty-state">Daten konnten nicht geladen werden ('+esc(String(err))+'). '+
+        'Läuft diese Seite lokal ohne Webserver? data/data.json per HTTP(S) bereitstellen, z. B. mit <code>python -m http.server</code> oder GitHub Pages.</div>';
+    });
+
+  function init(data){
+    var items = data.items;
+    var meta = data.meta;
+    var NEW_DAYS = 122; // ~4 Monate
+
+    var now = new Date();
+    items.forEach(function(it){
+      it.isNew = false;
+      if (it.dateIso){
+        var d = new Date(it.dateIso + "T00:00:00Z");
+        var days = (now - d) / 86400000;
+        it.isNew = days >= 0 && days <= NEW_DAYS;
+      }
+      it.typeList = it.type.split(" / ");
+    });
+
+    var types = ["Ergebnisbericht","Hinweis","Richtlinie","Use Case"];
+    var themes = Array.from(new Set(items.map(function(i){return i.theme || "Sonstiges";})));
+    // order themes by item count desc
+    var themeCounts = {};
+    items.forEach(function(i){ var t=i.theme||"Sonstiges"; themeCounts[t]=(themeCounts[t]||0)+1; });
+    themes.sort(function(a,b){ return themeCounts[b]-themeCounts[a]; });
+
+    var state = { q:"", types:new Set(), theme:null, onlyNew:false };
+
+    renderStats();
+    renderTypeChips();
+    renderThemeChips();
+    render();
+
+    document.getElementById('search').addEventListener('input', function(e){
+      state.q = e.target.value.trim().toLowerCase();
+      render();
+    });
+
+    function renderStats(){
+      var el = document.getElementById('stats');
+      var newCount = items.filter(function(i){return i.isNew;}).length;
+      var parts = [];
+      parts.push(stat(meta.totalItems, "Dokumente gesamt"));
+      types.forEach(function(t){
+        var c = items.filter(function(i){return i.typeList.indexOf(t)>-1;}).length;
+        parts.push(stat(c, t));
+      });
+      parts.push(stat(newCount, "Neu (≤ 4 Mon.)"));
+      el.innerHTML = parts.join("");
+    }
+    function stat(n,label){
+      return '<div class="stat"><b>'+n+'</b><span>'+esc(label)+'</span></div>';
+    }
+
+    function renderTypeChips(){
+      var el = document.getElementById('typeChips');
+      var html = '<span class="chip-label">Art</span>';
+      types.forEach(function(t){
+        html += '<button class="chip" data-type="'+esc(t)+'">'+esc(t)+'</button>';
+      });
+      html += '<button class="chip toggle" id="newToggle">✦ Nur Neu</button>';
+      el.innerHTML = html;
+      el.querySelectorAll('[data-type]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var t = btn.getAttribute('data-type');
+          if (state.types.has(t)) state.types.delete(t); else state.types.add(t);
+          btn.classList.toggle('active');
+          render();
+        });
+      });
+      document.getElementById('newToggle').addEventListener('click', function(){
+        state.onlyNew = !state.onlyNew;
+        this.classList.toggle('active');
+        render();
+      });
+    }
+
+    function renderThemeChips(){
+      var el = document.getElementById('themeChips');
+      var html = '<span class="chip-label">Thema</span>';
+      html += '<button class="chip active" data-theme="__all__">Alle</button>';
+      themes.forEach(function(t){
+        html += '<button class="chip" data-theme="'+esc(t)+'">'+esc(t)+' <span class="mono">'+themeCounts[t]+'</span></button>';
+      });
+      el.innerHTML = html;
+      el.querySelectorAll('[data-theme]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          el.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active');});
+          btn.classList.add('active');
+          var t = btn.getAttribute('data-theme');
+          state.theme = (t === "__all__") ? null : t;
+          render();
+        });
+      });
+    }
+
+    function matches(it){
+      if (state.onlyNew && !it.isNew) return false;
+      if (state.types.size > 0){
+        var ok = it.typeList.some(function(t){return state.types.has(t);});
+        if (!ok) return false;
+      }
+      if (state.theme && (it.theme||"Sonstiges") !== state.theme) return false;
+      if (state.q){
+        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")).toLowerCase();
+        if (hay.indexOf(state.q) === -1) return false;
+      }
+      return true;
+    }
+
+    function render(){
+      var filtered = items.filter(matches);
+      document.getElementById('resultCount').textContent = filtered.length + " / " + items.length + " Dokumente";
+
+      var byTheme = {};
+      filtered.forEach(function(it){
+        var t = it.theme || "Sonstiges";
+        (byTheme[t] = byTheme[t] || []).push(it);
+      });
+
+      var orderedThemes = themes.filter(function(t){ return byTheme[t] && byTheme[t].length; });
+
+      var main = document.getElementById('main');
+      if (orderedThemes.length === 0){
+        main.innerHTML = '<div class="empty-state">Keine Treffer. Filter anpassen oder Suchbegriff ändern.</div>';
+        return;
+      }
+
+      var html = "";
+      orderedThemes.forEach(function(theme){
+        var list = byTheme[theme].slice().sort(function(a,b){ return (b.dateIso||"").localeCompare(a.dateIso||""); });
+        html += '<section class="theme-section">';
+        html += '<div class="theme-head"><h2>'+esc(theme)+'</h2><span class="theme-count mono">'+list.length+'</span><span class="theme-caret">▾</span></div>';
+        html += '<div class="card-grid">';
+        list.forEach(function(it){ html += card(it); });
+        html += '</div></section>';
+      });
+      main.innerHTML = html;
+
+      main.querySelectorAll('.theme-head').forEach(function(h){
+        h.addEventListener('click', function(){
+          h.parentElement.classList.toggle('collapsed');
+        });
+      });
+    }
+
+    function card(it){
+      var badges = it.typeList.map(function(t){
+        return '<span class="badge type-'+esc(t.replace(/\s+/g,''))+'">'+esc(t)+'</span>';
+      }).join("");
+      if (it.isNew) badges += '<span class="badge new">✦ Neu</span>';
+      if (it.locked) badges += '<span class="badge locked">🔒 Mitglieder</span>';
+
+      var committee = it.committee ? '<div class="committee"><b>Gremium:</b> '+esc(it.committee)+'</div>' : '';
+      var tags = (it.tags && it.tags.length) ? '<div class="tags">'+it.tags.slice(0,6).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join("")+'</div>' : '';
+
+      var linkLabel = it.hasDirectLink ? 'Zur Quelle auf aktuar.de' : 'Zur Fachinformationen-Suche (Login erforderlich)';
+      var prev = "";
+      if (it.previousVersions && it.previousVersions.length){
+        prev = '<details class="prev-versions"><summary>'+it.previousVersions.length+' frühere Fassung(en)</summary>' +
+          it.previousVersions.map(function(v){ return '<div><a class="source-link" href="'+esc(v.url)+'" target="_blank" rel="noopener">'+esc(v.date)+'</a></div>'; }).join("") +
+          '</details>';
+      }
+
+      return '<article class="card">'+
+        '<div class="card-top">'+badges+'<span class="card-date mono">'+esc(it.date)+'</span></div>'+
+        '<h3><a href="'+esc(it.url)+'" target="_blank" rel="noopener">'+esc(it.title)+'<span class="ext">↗</span></a></h3>'+
+        committee+
+        '<p class="desc">'+esc(it.description)+'</p>'+
+        tags+
+        '<div class="card-foot"><a class="source-link" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+linkLabel+'</a>'+prev+'</div>'+
+        '</article>';
+    }
+
+    document.getElementById('footer').innerHTML =
+      'Stand der Daten: <span class="mono">'+esc(meta.generatedAt)+'</span> · Quelle: <a href="'+esc(meta.source)+'" target="_blank" rel="noopener">aktuar.de/de/wissen/fachinformationen</a> · '+
+      'Kurzbeschreibungen sind automatisiert aus den öffentlichen „Überblick“-Absätzen der DAV extrahiert und können ungenau sein — im Zweifel gilt das Originaldokument. '+
+      'Diese Seite ist ein privates, inoffizielles Hilfsmittel ohne Verbindung zur Deutschen Aktuarvereinigung e.V.; alle Inhalte und Rechte liegen bei der DAV. '+
+      'Als Mitglieder-Dokument markierte Einträge sind nur nach Login auf aktuar.de vollständig einsehbar.';
+  }
+
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+})();
+</script>
+</body>
+</html>

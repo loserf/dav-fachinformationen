@@ -1,0 +1,50 @@
+name: DAV-Fachinformationen aktualisieren
+
+on:
+  schedule:
+    # Jeden Montag um 05:00 UTC (06:00/07:00 MEZ/MESZ)
+    - cron: "0 5 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Daten von aktuar.de neu abrufen
+        shell: pwsh
+        run: ./scripts/update-data.ps1
+
+      - name: Änderungen committen, falls vorhanden
+        id: commit
+        run: |
+          git config user.name "dav-fachinfo-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet -- data/data.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git add data/data.json
+            git commit -m "Fachinformationen aktualisiert ($(date -u +%Y-%m-%d))"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy-pages:
+    needs: update-data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
