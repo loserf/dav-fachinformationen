@@ -404,7 +404,7 @@
       }
       if (state.theme && (it.theme||"Sonstiges") !== state.theme) return false;
       if (state.q){
-        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")+" "+(it.authors||[]).join(" ")+" "+(it.event||"")).toLowerCase();
+        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")+" "+(it.authors||[]).join(" ")+" "+(it.event||"")+" "+(it.detailTheme||"")).toLowerCase();
         if (hay.indexOf(state.q) === -1) return false;
       }
       return true;
@@ -458,6 +458,9 @@
       var isTalk = it.typeList.indexOf('actuview') > -1;
 
       var meta = "";
+      if (it.detailTheme && it.detailTheme !== it.theme){
+        meta += '<div class="committee"><b>Detailthema:</b> '+esc(it.detailTheme)+'</div>';
+      }
       if (isTalk){
         if (it.event) meta += '<div class="committee"><b>Tagung:</b> '+esc(it.event)+'</div>';
         if (it.authors && it.authors.length) meta += '<div class="committee"><b>Autor(en):</b> '+esc(it.authors.join(', '))+'</div>';

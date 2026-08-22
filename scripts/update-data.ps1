@@ -1,6 +1,6 @@
 # Aktualisiert data/data.json mit Inhalten aus drei Quellen:
 #  1. aktuar.de       -> Ergebnisbericht, Hinweis, Richtlinie, Use Case
-#  2. GitHub-Org       -> GitHub-Material, Best Notebook Award, Data Science Challenge
+#  2. GitHub-Org       -> GitHub-Material (inkl. Best Notebook Award, Data Science Challenge als Tags)
 #     (github.com/DeutscheAktuarvereinigung, oeffentliche REST-API, kein Token noetig)
 #  3. actuview.com     -> Art "actuview" (Vortraege des DAV/DGVFM Annual/Autumn Meeting ab 2020)
 #
@@ -64,6 +64,15 @@ function Get-Theme($title, $category) {
     $cleanTitle = ($title -replace "\s+", " ").Trim()
     if ($ThemeOverrideByTitle.ContainsKey($cleanTitle)) { return $ThemeOverrideByTitle[$cleanTitle] }
     return Rename-Theme $category
+}
+
+# Nur diese sechs Themen bleiben als eigene, filterbare Gruppen bestehen;
+# alle anderen (kleineren) Themen werden zu "Weitere Themen" zusammengefasst.
+# Das urspruengliche, spezifischere Thema bleibt je Dokument als "detailTheme" erhalten.
+$MajorThemes = @("Risikomanagement","Lebensversicherung","Schadenversicherung","Actuarial Data Science / AI","Krankenversicherung","betriebliche Altersversorgung")
+function Consolidate-Theme($t) {
+    if ($MajorThemes -contains $t) { return $t }
+    return "Weitere Themen"
 }
 
 # ============================================================================
@@ -159,12 +168,14 @@ foreach ($g in ($raw | Group-Object title)) {
     if (-not $descText) { $descText = Strip-Html $primary.teaser }
     $descText = $descText -replace "^Überblick\s*", ""
 
+    $detailTheme = Get-Theme $primary.title $primary.category
     $fachinfoItems.Add([PSCustomObject]@{
         type             = ($allTypesForUrl -join " / ")
         title            = ($primary.title -replace "\s+", " ").Trim()
         date             = $primary.publishedAt
         dateIso          = $iso
-        theme            = Get-Theme $primary.title $primary.category
+        theme            = Consolidate-Theme $detailTheme
+        detailTheme      = $detailTheme
         tags             = $primary.tags
         committee        = Get-Committee $primary.content
         description      = Get-ShortText $descText 3 420
@@ -239,7 +250,7 @@ try {
         if ($r.name -match '^(\d{4})_CADS_(Immersion|Completion)_Best_Notebooks$') {
             $year = $Matches[1]; $kind = $Matches[2]
             $title = "Best Notebook Award – CADS $kind $year"
-            $extraTags = @("Best Notebook Award", "CADS $kind", $year)
+            $extraTags = @("CADS $kind", $year)
         }
         elseif ($r.name -match 'Data.Science.Challenge') {
             $yearMatch = [regex]::Match($r.name, '\d{4}')
@@ -249,7 +260,7 @@ try {
                 $rest = ($r.name -replace 'Data[_-]Science[_-]Challenge2?_?\d{4}_?', '') -replace "_"," " -replace "-"," "
                 $title = "Data Science Challenge $year – $rest".Trim()
             }
-            $extraTags = @("Data Science Challenge", $year)
+            $extraTags = @($year)
         }
         else {
             if ($titleMap.ContainsKey($r.name)) { $title = $titleMap[$r.name] }
@@ -270,6 +281,7 @@ try {
             date             = $pushed.ToString("dd.MM.yyyy")
             dateIso          = $pushed.ToString("yyyy-MM-dd")
             theme            = "Actuarial Data Science / AI"
+            detailTheme      = "Actuarial Data Science / AI"
             tags             = $tags
             committee        = ""
             description      = $desc
@@ -382,7 +394,8 @@ try {
         $category = ($cats -join ", ")
         $primaryCat = ""
         if ($cats.Count -gt 0) { $primaryCat = ([string]$cats[0]).ToUpper().Trim() }
-        $theme = if ($primaryCat -and $themeMapAv.ContainsKey($primaryCat)) { $themeMapAv[$primaryCat] } else { "Fachinformationen" }
+        $detailTheme = if ($primaryCat -and $themeMapAv.ContainsKey($primaryCat)) { $themeMapAv[$primaryCat] } else { "Fachinformationen" }
+        $theme = Consolidate-Theme $detailTheme
         $speakers = @(if ($d -and $d.speakers) { @($d.speakers) } else { @() })
         $hasPdf = if ($d) { [bool]$d.hasAttachment } else { $false }
         $slug = if ($d -and $d.slug) { $d.slug } else { "" }
@@ -396,6 +409,7 @@ try {
             date             = ([datetime]$s.eventDate).ToString("dd.MM.yyyy")
             dateIso          = ([datetime]$s.eventDate).ToString("yyyy-MM-dd")
             theme            = $theme
+            detailTheme      = $detailTheme
             tags             = @()
             committee        = $category
             authors          = $speakers
