@@ -1,17 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-08-21T12:36:54Z",
+    "generatedAt": "2026-08-21T11:52:36Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 748,
     "byType": {
+      "GitHub-Material": 28,
+      "Ergebnisbericht": 242,
+      "Richtlinie": 16,
       "Hinweis": 40,
       "actuview": 425,
-      "GitHub-Material": 19,
-      "Use Case": 5,
-      "Richtlinie": 16,
-      "Data Science Challenge": 4,
-      "Ergebnisbericht": 242,
-      "Best Notebook Award": 5
+      "Use Case": 5
     }
   },
   "items": [
@@ -31,12 +29,13 @@
       "previousVersions": []
     },
     {
-      "type": "Best Notebook Award",
+      "type": "GitHub-Material",
       "title": "Best Notebook Award – CADS Immersion 2026",
       "date": "22.07.2026",
       "dateIso": "2026-07-22",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Best Notebook Award",
         "CADS Immersion",
         "2026"
       ],
@@ -1135,12 +1134,13 @@
       "previousVersions": []
     },
     {
-      "type": "Best Notebook Award",
+      "type": "GitHub-Material",
       "title": "Best Notebook Award – CADS Completion 2026",
       "date": "12.03.2026",
       "dateIso": "2026-03-12",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Best Notebook Award",
         "CADS Completion",
         "2026"
       ],
@@ -1168,12 +1168,13 @@
       "previousVersions": []
     },
     {
-      "type": "Best Notebook Award",
+      "type": "GitHub-Material",
       "title": "Best Notebook Award – CADS Immersion 2025",
       "date": "11.03.2026",
       "dateIso": "2026-03-11",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Best Notebook Award",
         "CADS Immersion",
         "2025"
       ],
@@ -2129,12 +2130,13 @@
       "previousVersions": []
     },
     {
-      "type": "Best Notebook Award",
+      "type": "GitHub-Material",
       "title": "Best Notebook Award – CADS Completion 2025",
       "date": "10.09.2025",
       "dateIso": "2025-09-10",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Best Notebook Award",
         "CADS Completion",
         "2025"
       ],
@@ -4305,12 +4307,13 @@
       "previousVersions": []
     },
     {
-      "type": "Best Notebook Award",
+      "type": "GitHub-Material",
       "title": "Best Notebook Award – CADS Immersion 2024",
       "date": "05.11.2024",
       "dateIso": "2024-11-05",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Best Notebook Award",
         "CADS Immersion",
         "2024"
       ],
@@ -8042,12 +8045,13 @@
       "previousVersions": []
     },
     {
-      "type": "Data Science Challenge",
+      "type": "GitHub-Material",
       "title": "Data Science Challenge 2022 – Schadenhäufigkeitsmodelle in Python",
       "date": "09.12.2022",
       "dateIso": "2022-12-09",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Data Science Challenge",
         "2022"
       ],
       "committee": "",
@@ -10183,12 +10187,13 @@
       "previousVersions": []
     },
     {
-      "type": "Data Science Challenge",
+      "type": "GitHub-Material",
       "title": "Data Science Challenge 2021 – Explainable Machine Learning",
       "date": "10.01.2022",
       "dateIso": "2022-01-10",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Data Science Challenge",
         "actuarial",
         "challenge",
         "data-science",
@@ -12266,12 +12271,13 @@
       "previousVersions": []
     },
     {
-      "type": "Data Science Challenge",
+      "type": "GitHub-Material",
       "title": "Data Science Challenge 2020 – Betrugserkennung (Fraud Detection)",
       "date": "17.11.2020",
       "dateIso": "2020-11-17",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Data Science Challenge",
         "actuarial-modeling",
         "betrugserkennung",
         "challenge",
@@ -12290,12 +12296,13 @@
       "previousVersions": []
     },
     {
-      "type": "Data Science Challenge",
+      "type": "GitHub-Material",
       "title": "Data Science Challenge 2020 – Machine-Learning-Methoden für die Berufsunfähigkeitsversicherung",
       "date": "17.11.2020",
       "dateIso": "2020-11-17",
       "theme": "Actuarial Data Science / AI",
       "tags": [
+        "Data Science Challenge",
         "actuarial",
         "berufsunfaehigkeit",
         "datasciencechallenge",
@@ -13521,7 +13528,7 @@
       "title": "Market Consistent Emdedded Value in der Krankenversicherung",
       "date": "27.06.2019",
       "dateIso": "2019-06-27",
-      "theme": "Solvency II",
+      "theme": "Krankenversicherung",
       "tags": [
         "Market Consistent Embedded Value",
         "Embedded Value Berechnung",
@@ -14135,7 +14142,7 @@
       "title": "Asset-Liability-Management in der Privaten Krankenversicherung",
       "date": "19.07.2017",
       "dateIso": "2017-07-19",
-      "theme": "Solvency II",
+      "theme": "Krankenversicherung",
       "tags": [
         "Asset-Liability-Management",
         "ALM",

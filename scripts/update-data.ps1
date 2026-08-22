@@ -54,6 +54,18 @@ function Get-ShortText($text, $maxSentences, $maxLen) {
 $ThemeRename = @{ "Actuarial Data Science" = "Actuarial Data Science / AI" }
 function Rename-Theme($t) { if ($ThemeRename.ContainsKey($t)) { return $ThemeRename[$t] } else { return $t } }
 
+# Manuelle Themen-Korrekturen je Dokumenttitel (z.B. weil aktuar.de selbst eine
+# Randkategorie wie "Solvency II" vergeben hat, die als eigenes Thema keinen Sinn ergibt).
+$ThemeOverrideByTitle = @{
+    "Market Consistent Emdedded Value in der Krankenversicherung" = "Krankenversicherung"
+    "Asset-Liability-Management in der Privaten Krankenversicherung" = "Krankenversicherung"
+}
+function Get-Theme($title, $category) {
+    $cleanTitle = ($title -replace "\s+", " ").Trim()
+    if ($ThemeOverrideByTitle.ContainsKey($cleanTitle)) { return $ThemeOverrideByTitle[$cleanTitle] }
+    return Rename-Theme $category
+}
+
 # ============================================================================
 # QUELLE 1: aktuar.de Fachinformationen
 # ============================================================================
@@ -152,7 +164,7 @@ foreach ($g in ($raw | Group-Object title)) {
         title            = ($primary.title -replace "\s+", " ").Trim()
         date             = $primary.publishedAt
         dateIso          = $iso
-        theme            = Rename-Theme $primary.category
+        theme            = Get-Theme $primary.title $primary.category
         tags             = $primary.tags
         committee        = Get-Committee $primary.content
         description      = Get-ShortText $descText 3 420
@@ -225,13 +237,11 @@ try {
         $title = $null
 
         if ($r.name -match '^(\d{4})_CADS_(Immersion|Completion)_Best_Notebooks$') {
-            $art = "Best Notebook Award"
             $year = $Matches[1]; $kind = $Matches[2]
             $title = "Best Notebook Award – CADS $kind $year"
-            $extraTags = @("CADS $kind", $year)
+            $extraTags = @("Best Notebook Award", "CADS $kind", $year)
         }
         elseif ($r.name -match 'Data.Science.Challenge') {
-            $art = "Data Science Challenge"
             $yearMatch = [regex]::Match($r.name, '\d{4}')
             $year = if ($yearMatch.Success) { $yearMatch.Value } else { "" }
             if ($titleMap.ContainsKey($r.name)) { $title = $titleMap[$r.name] }
@@ -239,7 +249,7 @@ try {
                 $rest = ($r.name -replace 'Data[_-]Science[_-]Challenge2?_?\d{4}_?', '') -replace "_"," " -replace "-"," "
                 $title = "Data Science Challenge $year – $rest".Trim()
             }
-            $extraTags = @($year)
+            $extraTags = @("Data Science Challenge", $year)
         }
         else {
             if ($titleMap.ContainsKey($r.name)) { $title = $titleMap[$r.name] }

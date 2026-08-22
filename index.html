@@ -96,7 +96,18 @@
     display:flex; align-items:center; gap:8px;
   }
   .eyebrow .dot{ width:6px;height:6px;border-radius:50%;background:var(--accent); display:inline-block; }
+  .title-row{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
   h1.title{ font-size:clamp(28px, 4vw, 40px); font-weight:600; margin-top:6px; color:var(--ink); }
+  .intro-toggle{
+    background:none; border:none; color:var(--ink-faint); font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px; letter-spacing:.03em; cursor:pointer; padding:4px 0; white-space:nowrap;
+  }
+  .intro-toggle:hover{ color:var(--accent-ink); }
+  #introBody{
+    max-height:600px; overflow:hidden; opacity:1;
+    transition:max-height .25s ease, opacity .2s ease;
+  }
+  #introBody.collapsed{ max-height:0; opacity:0; }
   .subtitle{ color:var(--ink-soft); max-width:62ch; margin-top:8px; font-size:14.5px; }
 
   .stats{
@@ -234,17 +245,23 @@
 <header class="top">
   <div class="top-inner">
     <div class="eyebrow"><span class="dot"></span>Inoffizielle Übersicht · nicht von der DAV betrieben</div>
-    <h1 class="title">DAV Fachinformationen</h1>
-    <p class="subtitle">Ergebnisberichte, Hinweise, Richtlinien, Use Cases, GitHub-Materialien und actuview-Vorträge der Deutschen Aktuarvereinigung — durchsuchbar und nach Themen geordnet, automatisch abgeglichen mit <a href="https://aktuar.de/de/wissen/fachinformationen/" target="_blank" rel="noopener">aktuar.de</a>, <a href="https://github.com/DeutscheAktuarvereinigung" target="_blank" rel="noopener">GitHub</a> und <a href="https://actuview.com/" target="_blank" rel="noopener">actuview.com</a>.</p>
-    <div class="stats" id="stats"></div>
+    <div class="title-row">
+      <h1 class="title">DAV Fachinformationen</h1>
+      <button type="button" id="introToggle" class="intro-toggle" aria-expanded="true">Details ausblenden ▾</button>
+    </div>
+    <div id="introBody">
+      <p class="subtitle">Ergebnisberichte, Hinweise, Richtlinien, Use Cases, GitHub-Materialien und actuview-Vorträge der Deutschen Aktuarvereinigung — durchsuchbar und nach Themen geordnet, automatisch abgeglichen mit <a href="https://aktuar.de/de/wissen/fachinformationen/" target="_blank" rel="noopener">aktuar.de</a>, <a href="https://github.com/DeutscheAktuarvereinigung" target="_blank" rel="noopener">GitHub</a> und <a href="https://actuview.com/" target="_blank" rel="noopener">actuview.com</a>.</p>
+      <div class="stats" id="stats"></div>
+    </div>
   </div>
 </header>
 
 <div class="controls">
   <div class="controls-panel">
     <div class="search-row">
-      <input type="search" id="search" placeholder="Suche nach Titel, Stichwort, Gremium, Vortragenden …" autocomplete="off">
+      <input type="search" id="search" placeholder="Suche nach Titel, Stichwort, Gremium, Vortragende …" autocomplete="off">
       <span class="result-count" id="resultCount"></span>
+      <button type="button" class="chip toggle" id="newToggle">Neu</button>
     </div>
     <div class="chip-row" id="typeChips"></div>
     <div class="chip-row" id="themeChips"></div>
@@ -282,7 +299,7 @@
       it.typeList = it.type.split(" / ");
     });
 
-    var preferredTypeOrder = ["Ergebnisbericht","Hinweis","Richtlinie","Use Case","actuview","GitHub-Material","Best Notebook Award","Data Science Challenge"];
+    var preferredTypeOrder = ["Ergebnisbericht","Hinweis","Richtlinie","Use Case","actuview","GitHub-Material"];
     var typesSeen = new Set();
     items.forEach(function(i){ i.typeList.forEach(function(t){ typesSeen.add(t); }); });
     var types = preferredTypeOrder.filter(function(t){ return typesSeen.has(t); });
@@ -304,6 +321,27 @@
     document.getElementById('search').addEventListener('input', function(e){
       state.q = e.target.value.trim().toLowerCase();
       render();
+    });
+
+    document.getElementById('newToggle').addEventListener('click', function(){
+      state.onlyNew = !state.onlyNew;
+      this.classList.toggle('active');
+      render();
+    });
+
+    var introToggle = document.getElementById('introToggle');
+    var introBody = document.getElementById('introBody');
+    var introCollapsed = localStorage.getItem('davIntroCollapsed') === '1';
+    function applyIntroState(){
+      introBody.classList.toggle('collapsed', introCollapsed);
+      introToggle.setAttribute('aria-expanded', String(!introCollapsed));
+      introToggle.textContent = introCollapsed ? 'Details anzeigen ▸' : 'Details ausblenden ▾';
+    }
+    applyIntroState();
+    introToggle.addEventListener('click', function(){
+      introCollapsed = !introCollapsed;
+      localStorage.setItem('davIntroCollapsed', introCollapsed ? '1' : '0');
+      applyIntroState();
     });
 
     function renderStats(){
@@ -328,7 +366,6 @@
       types.forEach(function(t){
         html += '<button class="chip" data-type="'+esc(t)+'">'+esc(t)+'</button>';
       });
-      html += '<button class="chip toggle" id="newToggle">✦ Nur Neu</button>';
       el.innerHTML = html;
       el.querySelectorAll('[data-type]').forEach(function(btn){
         btn.addEventListener('click', function(){
@@ -337,11 +374,6 @@
           btn.classList.toggle('active');
           render();
         });
-      });
-      document.getElementById('newToggle').addEventListener('click', function(){
-        state.onlyNew = !state.onlyNew;
-        this.classList.toggle('active');
-        render();
       });
     }
 
@@ -380,7 +412,7 @@
 
     function render(){
       var filtered = items.filter(matches);
-      document.getElementById('resultCount').textContent = filtered.length + " / " + items.length + " Dokumente";
+      document.getElementById('resultCount').textContent = filtered.length + " Dokumente";
 
       var byTheme = {};
       filtered.forEach(function(it){
