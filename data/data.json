@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-08-21T11:52:36Z",
+    "generatedAt": "2026-08-22T21:04:28Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 748,
     "byType": {
-      "GitHub-Material": 28,
-      "Ergebnisbericht": 242,
-      "Richtlinie": 16,
       "Hinweis": 40,
+      "Richtlinie": 16,
+      "Use Case": 5,
       "actuview": 425,
-      "Use Case": 5
+      "Ergebnisbericht": 242,
+      "GitHub-Material": 28
     }
   },
   "items": [
@@ -10193,13 +10193,13 @@
       "dateIso": "2022-01-10",
       "theme": "Actuarial Data Science / AI",
       "tags": [
-        "Data Science Challenge",
         "actuarial",
         "challenge",
         "data-science",
         "fraud-detection",
         "interpretable-machine-learning",
         "xai-analytics",
+        "Data Science Challenge",
         "2021"
       ],
       "committee": "",
@@ -12277,7 +12277,6 @@
       "dateIso": "2020-11-17",
       "theme": "Actuarial Data Science / AI",
       "tags": [
-        "Data Science Challenge",
         "actuarial-modeling",
         "betrugserkennung",
         "challenge",
@@ -12285,6 +12284,7 @@
         "datasciencechallenge",
         "fraud-detection",
         "frauddetection",
+        "Data Science Challenge",
         "2020"
       ],
       "committee": "",
@@ -12302,12 +12302,12 @@
       "dateIso": "2020-11-17",
       "theme": "Actuarial Data Science / AI",
       "tags": [
-        "Data Science Challenge",
         "actuarial",
         "berufsunfaehigkeit",
         "datasciencechallenge",
         "datasciencechallenges",
         "insurance",
+        "Data Science Challenge",
         "2020"
       ],
       "committee": "",
