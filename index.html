@@ -404,7 +404,7 @@
       }
       if (state.theme && (it.theme||"Sonstiges") !== state.theme) return false;
       if (state.q){
-        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")+" "+(it.authors||[]).join(" ")+" "+(it.event||"")+" "+(it.detailTheme||"")).toLowerCase();
+        var hay = (it.title+" "+it.description+" "+it.committee+" "+(it.tags||[]).join(" ")+" "+(it.authors||[]).join(" ")+" "+(it.event||"")+" "+(it.detailTheme||"")+" "+(it.relatedArticleTitle||"")).toLowerCase();
         if (hay.indexOf(state.q) === -1) return false;
       }
       return true;
@@ -466,8 +466,14 @@
         if (it.authors && it.authors.length) meta += '<div class="committee"><b>Autor(en):</b> '+esc(it.authors.join(', '))+'</div>';
         if (it.committee) meta += '<div class="committee"><b>Fachgruppe:</b> '+esc(it.committee)+'</div>';
         meta += '<div class="committee"><b>Vortragsfolien (PDF):</b> '+(it.pdfAvailable ? 'verfügbar (Login auf actuview.com erforderlich)' : 'nicht hinterlegt')+'</div>';
+        if (it.relatedArticleUrl) meta += '<div class="committee"><b>Vorgestellte Fachinformation:</b> <a class="source-link" href="'+esc(it.relatedArticleUrl)+'" target="_blank" rel="noopener">'+esc(it.relatedArticleTitle)+' ↗</a></div>';
       } else {
         if (it.committee) meta += '<div class="committee"><b>Gremium:</b> '+esc(it.committee)+'</div>';
+        if (it.relatedTalks && it.relatedTalks.length){
+          meta += '<div class="committee"><b>Vortrag'+(it.relatedTalks.length>1?'e':'')+' dazu:</b> '+
+            it.relatedTalks.map(function(t){ return '<a class="source-link" href="'+esc(t.url)+'" target="_blank" rel="noopener">'+esc(t.event||t.title)+' ↗</a>'; }).join(', ')+
+            '</div>';
+        }
       }
 
       var linkLabel = isTalk ? 'Zum Vortrag auf actuview.com' : (it.hasDirectLink ? 'Zur Quelle auf aktuar.de' : 'Zur Fachinformationen-Suche (Login erforderlich)');

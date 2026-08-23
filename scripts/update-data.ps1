@@ -296,7 +296,7 @@ try {
             $crossRef[$crossRefMap[$r.name]] = $r.html_url
         }
     }
-    Write-Host "  -> $($githubItems.Count) GitHub-Eintraege ($(($githubItems | Where-Object {$_.type -eq 'Best Notebook Award'}).Count) Best Notebook Award, $(($githubItems | Where-Object {$_.type -eq 'Data Science Challenge'}).Count) Data Science Challenge)"
+    Write-Host "  -> $($githubItems.Count) GitHub-Eintraege ($(($githubItems | Where-Object {$_.title -like 'Best Notebook Award*'}).Count) Best Notebook Award, $(($githubItems | Where-Object {$_.title -like 'Data Science Challenge*'}).Count) Data Science Challenge)"
 }
 catch {
     Write-Warning "GitHub-Abruf fehlgeschlagen, wird uebersprungen: $_"
@@ -329,10 +329,24 @@ try {
     }
     Write-Host "  $($relevantEvents.Count) relevante Events (Annual/Autumn Meeting ab 2020)"
 
-    $stubs = New-Object System.Collections.Generic.List[object]
+    # Manche (v.a. aeltere) Events buendeln ihre Vortraege in Unter-Events (z.B. "Tag 1/2/3"),
+    # die eigene event_ids haben und in /api/events NICHT separat auftauchen. Ohne diese
+    # Erweiterung fehlen deren Vortraege komplett (media_count zaehlt sie mit, die Video-API
+    # unter der Haupt-event_id liefert sie aber nicht). Deshalb werden Unter-Events mit abgefragt.
+    $queryTargets = New-Object System.Collections.Generic.List[object]
     foreach ($ev in $relevantEvents) {
-        $limit = [Math]::Max(50, $ev.media_count + 5)
-        $url = "https://actuview.com/api/videos?orderby=published&sortdirection=desc&limit=$limit&filterbyevent=$($ev.event_id)&filterbylanguage=cs,de,en,es,fr,ga,it,lt,pt"
+        $queryTargets.Add([PSCustomObject]@{ queryId = $ev.event_id; eventTitle = $ev.title; eventDate = $ev.date })
+        if ($ev.subEventscount -gt 0 -and $ev.subevents) {
+            foreach ($se in @($ev.subevents)) {
+                $queryTargets.Add([PSCustomObject]@{ queryId = $se.id; eventTitle = $ev.title; eventDate = $se.date })
+            }
+        }
+    }
+    Write-Host "  -> $($queryTargets.Count) Abfrageziele (inkl. Unter-Events)"
+
+    $stubs = New-Object System.Collections.Generic.List[object]
+    foreach ($qt in $queryTargets) {
+        $url = "https://actuview.com/api/videos?orderby=published&sortdirection=desc&limit=100&filterbyevent=$($qt.queryId)&filterbylanguage=cs,de,en,es,fr,ga,it,lt,pt"
         $resp = Invoke-WebRequest -Uri $url -Headers $avHeaders
         $data = $resp.Content | ConvertFrom-Json
         $medium = $data.media.medium
@@ -341,10 +355,10 @@ try {
         foreach ($m in $medium) {
             $stubs.Add([PSCustomObject]@{
                 mid = $m.mid; title = $m.title; description = $m.description
-                eventId = $ev.event_id; eventTitle = $ev.title; eventDate = $ev.date
+                eventId = $qt.queryId; eventTitle = $qt.eventTitle; eventDate = $qt.eventDate
             })
         }
-        Write-Host "    Event $($ev.event_id) ($($ev.title)): $($medium.Count) Videos"
+        Write-Host "    Ziel $($qt.queryId) ($($qt.eventTitle)): $($medium.Count) Videos"
     }
     Write-Host "  -> $($stubs.Count) Vortraege gesamt, lade Details (parallel)..."
 
@@ -428,6 +442,99 @@ try {
 catch {
     Write-Warning "actuview-Abruf fehlgeschlagen, wird uebersprungen: $_"
 }
+
+# ============================================================================
+# VERKNUEPFUNG: actuview-Vortraege <-> Fachinformationen
+# ============================================================================
+# Viele Vortraege stellen einen konkreten Ergebnisbericht/Hinweis/etc. vor
+# (Titelmuster "Vorstellung Ergebnisbericht ..." o.ae.) oder tragen exakt
+# dessen Titel. Bewusst konservativ (nur eindeutige, ausreichend lange
+# Uebereinstimmungen), um Fehlzuordnungen zu vermeiden.
+Write-Host ""
+Write-Host "== Verknuepfung Vortraege <-> Fachinformationen =="
+
+function Normalize-Title($t) {
+    if (-not $t) { return "" }
+    $s = $t.ToLower()
+    # Anfuehrungszeichen-Varianten per Codepoint entfernen (encoding-sicher statt Literalzeichen)
+    foreach ($cp in @(0x201E,0x201C,0x201D,0x201A,0x2018,0x2019,0x00B4)) { $s = $s.Replace(([char]$cp).ToString(), '') }
+    $s = $s.Replace('`','').Replace('"','').Replace("'",'')
+    foreach ($cp in @(0x2013,0x2014)) { $s = $s.Replace(([char]$cp).ToString(), ' ') }
+    $s = $s -replace '[:\-,\.]', ' '
+    $s = $s -replace '\s+', ' '
+    return $s.Trim()
+}
+
+$TalkPrefixes = @(
+    'vorstellung des ergebnisberichts ', 'vorstellung ergebnisbericht ',
+    'vorstellung der richtlinie ', 'vorstellung des hinweises ', 'vorstellung hinweis ',
+    'vorstellung des use case ', 'vorstellung use case ', 'vorstellung '
+)
+function Strip-TalkPrefix($normTitle) {
+    foreach ($p in $TalkPrefixes) {
+        if ($normTitle.StartsWith($p)) { return $normTitle.Substring($p.Length).Trim() }
+    }
+    return $normTitle
+}
+
+# Sammelberichte einer Arbeitsgruppe/eines Ausschusses fassen typischerweise mehrere
+# Themen zusammen und sollen nicht auf ein einzelnes Dokument verengt werden.
+$ExcludeTalkPrefixes = @(
+    'bericht der ag ', 'bericht der arbeitsgruppe ', 'bericht aus der arbeitsgruppe ',
+    'bericht des ausschusses ', 'bericht aus dem ausschuss ', 'jahresbericht '
+)
+function Is-ExcludedTalk($normTitle) {
+    foreach ($p in $ExcludeTalkPrefixes) { if ($normTitle.StartsWith($p)) { return $true } }
+    return $false
+}
+
+$MinMatchLength = 18
+
+$fachinfoByNormTitle = @{}
+$fachinfoNormList = New-Object System.Collections.Generic.List[object]
+foreach ($fi in $fachinfoItems) {
+    $norm = Normalize-Title $fi.title
+    if (-not $fachinfoByNormTitle.ContainsKey($norm)) { $fachinfoByNormTitle[$norm] = $fi }
+    $fachinfoNormList.Add([PSCustomObject]@{ norm = $norm; item = $fi })
+    Add-Member -InputObject $fi -NotePropertyName "relatedTalks" -NotePropertyValue (New-Object System.Collections.Generic.List[object]) -Force
+}
+
+$linkCount = 0
+foreach ($av in $actuviewItems) {
+    $normTalk = Normalize-Title $av.title
+    if (Is-ExcludedTalk $normTalk) { continue }
+    $candidate = Strip-TalkPrefix $normTalk
+    if ($candidate.Length -lt $MinMatchLength) { continue }
+
+    $match = $null
+    if ($fachinfoByNormTitle.ContainsKey($candidate)) {
+        $match = $fachinfoByNormTitle[$candidate]
+    }
+    else {
+        # Bewusst strikt: bei mehreren gleich guten Treffern (z.B. jaehrliche Serien wie
+        # "Emerging Risks 2020/2021/..." fuer einen jahreslosen Talktitel) lieber gar nicht
+        # verknuepfen als zufaellig den falschen Jahrgang waehlen.
+        $bestLen = 0
+        $bestItems = New-Object System.Collections.Generic.List[object]
+        foreach ($f in $fachinfoNormList) {
+            if ($f.norm.Length -lt $MinMatchLength) { continue }
+            if ($candidate.Contains($f.norm) -or $f.norm.Contains($candidate)) {
+                $shorter = [Math]::Min($candidate.Length, $f.norm.Length)
+                if ($shorter -gt $bestLen) { $bestLen = $shorter; $bestItems.Clear(); $bestItems.Add($f.item) }
+                elseif ($shorter -eq $bestLen) { $bestItems.Add($f.item) }
+            }
+        }
+        if ($bestItems.Count -eq 1) { $match = $bestItems[0] }
+    }
+
+    if ($match) {
+        Add-Member -InputObject $av -NotePropertyName "relatedArticleUrl" -NotePropertyValue $match.url -Force
+        Add-Member -InputObject $av -NotePropertyName "relatedArticleTitle" -NotePropertyValue $match.title -Force
+        $match.relatedTalks.Add([PSCustomObject]@{ url = $av.url; title = $av.title; event = $av.event }) | Out-Null
+        $linkCount++
+    }
+}
+Write-Host "  -> $linkCount Vortraege mit Fachinformation verknuepft"
 
 # ============================================================================
 # ZUSAMMENFUEHREN & SCHREIBEN
