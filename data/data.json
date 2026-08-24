@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-08-23T18:38:33Z",
+    "generatedAt": "2026-08-24T05:38:55Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 792,
     "byType": {
-      "GitHub-Material": 28,
       "Hinweis": 40,
       "Richtlinie": 16,
-      "Use Case": 5,
+      "Ergebnisbericht": 242,
       "actuview": 469,
-      "Ergebnisbericht": 242
+      "GitHub-Material": 28,
+      "Use Case": 5
     }
   },
   "items": [
@@ -2082,17 +2082,17 @@
       "title": "Blick über den Zaun: Lebensversicherungsmarkt Schweiz",
       "date": "17.11.2025",
       "dateIso": "2025-11-17",
-      "theme": "Lebensversicherung",
-      "detailTheme": "Lebensversicherung",
+      "theme": "Weitere Themen",
+      "detailTheme": "Fachinformationen",
       "tags": [],
-      "committee": "LIFE, PENSIONS",
+      "committee": "",
       "authors": [
         "Klemens Binswanger"
       ],
       "event": "DAV/DGVFM Autumn Meeting 2025",
       "pdfAvailable": false,
       "description": "Ausgewählte Themen aus dem Lebensversicherungsmarkt der Schweiz, u. a Rentensystem invaliditätsversicherung Aufsicht Herausforderungen und der Vergleich zum Deutschen System.",
-      "url": "https://actuview.com/videos/blick-uber-den-zaun-lebensversicherungsmarkt-schweiz-4908",
+      "url": "https://actuview.com/videos/4908",
       "hasDirectLink": true,
       "locked": false,
       "isPdf": false,
