@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-08-24T05:38:55Z",
+    "generatedAt": "2026-08-31T11:25:10Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 792,
     "byType": {
+      "Ergebnisbericht": 242,
       "Hinweis": 40,
       "Richtlinie": 16,
-      "Ergebnisbericht": 242,
       "actuview": 469,
-      "GitHub-Material": 28,
-      "Use Case": 5
+      "Use Case": 5,
+      "GitHub-Material": 28
     }
   },
   "items": [
@@ -2082,17 +2082,17 @@
       "title": "Blick über den Zaun: Lebensversicherungsmarkt Schweiz",
       "date": "17.11.2025",
       "dateIso": "2025-11-17",
-      "theme": "Weitere Themen",
-      "detailTheme": "Fachinformationen",
+      "theme": "Lebensversicherung",
+      "detailTheme": "Lebensversicherung",
       "tags": [],
-      "committee": "",
+      "committee": "LIFE, PENSIONS",
       "authors": [
         "Klemens Binswanger"
       ],
       "event": "DAV/DGVFM Autumn Meeting 2025",
       "pdfAvailable": false,
       "description": "Ausgewählte Themen aus dem Lebensversicherungsmarkt der Schweiz, u. a Rentensystem invaliditätsversicherung Aufsicht Herausforderungen und der Vergleich zum Deutschen System.",
-      "url": "https://actuview.com/videos/4908",
+      "url": "https://actuview.com/videos/blick-uber-den-zaun-lebensversicherungsmarkt-schweiz-4908",
       "hasDirectLink": true,
       "locked": false,
       "isPdf": false,
@@ -6554,9 +6554,7 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE",
-      "authors": [
-        "Abdulkadir Cebi"
-      ],
+      "authors": [],
       "event": "DAV/DGVFM Autumn Meeting 2023",
       "pdfAvailable": true,
       "description": "Nach einer langen Niedrigzinsphase sind die Kapitalmarktzinsen mit unvorhergesehener Geschwindigkeit auf ein unerwartetes Niveau gestiegen. Und nun müssen die Lebensversicherer mit den Konsequenzen der schnell gestiegenen Zinsen umgehen, begleitet von einer hartnäckigen Inflation und Rezession sowie geopolitischen Unsicherheiten.",
