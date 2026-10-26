@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-10-19T10:33:12Z",
+    "generatedAt": "2026-10-26T10:50:45Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 797,
     "byType": {
-      "actuview": 469,
-      "Use Case": 5,
-      "Hinweis": 40,
-      "Richtlinie": 16,
       "Ergebnisbericht": 247,
-      "GitHub-Material": 28
+      "actuview": 469,
+      "GitHub-Material": 28,
+      "Richtlinie": 16,
+      "Use Case": 5,
+      "Hinweis": 40
     }
   },
   "items": [
@@ -4522,9 +4522,7 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE",
-      "authors": [
-        "Edel O‘Connell"
-      ],
+      "authors": [],
       "event": "DAV/DGVFM Autumn Meeting 2024",
       "pdfAvailable": true,
       "description": "...",
@@ -4543,9 +4541,7 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE, PENSIONS",
-      "authors": [
-        "Sigurd Löwe"
-      ],
+      "authors": [],
       "event": "DAV/DGVFM Autumn Meeting 2024",
       "pdfAvailable": true,
       "description": "...",
@@ -4586,9 +4582,7 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE, PENSIONS",
-      "authors": [
-        "Sven Ebert"
-      ],
+      "authors": [],
       "event": "DAV/DGVFM Autumn Meeting 2024",
       "pdfAvailable": true,
       "description": "...",
@@ -7788,7 +7782,7 @@
       ],
       "event": "DAV/DGVFM Annual Meeting 2023",
       "pdfAvailable": true,
-      "description": "Die Schweizerische Unfallversicherungsanstalt (Suva) ist die grösste Unfallversicherung der Schweiz und registriert ca. 450'000 Unfälle pro Jahr, was einem Marktanteil von rund 60% am Unfallversicherungsgeschäft entspricht. Vor einem Jahr wurde im Schadenmanagement der Suva von einer fallorientierten auf eine aufgabenbasierte Schadenbearbeitung umgestellt.",
+      "description": "Die Schweizerische Unfallversicherungsanstalt (Suva) ist die grösste Unfallversicherung der Schweiz und registriert ca. 450&#039;000 Unfälle pro Jahr, was einem Marktanteil von rund 60% am Unfallversicherungsgeschäft entspricht. Vor einem Jahr wurde im Schadenmanagement der Suva von einer fallorientierten auf eine aufgabenbasierte Schadenbearbeitung umgestellt.",
       "url": "https://actuview.com/videos/machine-learning-modelle-zur-untersttzung-der-fallfhrung-im-schadenmanagement-3096",
       "hasDirectLink": true,
       "locked": false,
