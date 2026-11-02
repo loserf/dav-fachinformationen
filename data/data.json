@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-10-26T10:50:45Z",
+    "generatedAt": "2026-11-02T13:08:27Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 797,
     "byType": {
-      "Ergebnisbericht": 247,
-      "actuview": 469,
       "GitHub-Material": 28,
       "Richtlinie": 16,
       "Use Case": 5,
-      "Hinweis": 40
+      "Ergebnisbericht": 247,
+      "Hinweis": 40,
+      "actuview": 469
     }
   },
   "items": [
@@ -4522,7 +4522,9 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE",
-      "authors": [],
+      "authors": [
+        "Edel O‘Connell"
+      ],
       "event": "DAV/DGVFM Autumn Meeting 2024",
       "pdfAvailable": true,
       "description": "...",
@@ -4541,7 +4543,9 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE, PENSIONS",
-      "authors": [],
+      "authors": [
+        "Sigurd Löwe"
+      ],
       "event": "DAV/DGVFM Autumn Meeting 2024",
       "pdfAvailable": true,
       "description": "...",
@@ -4582,7 +4586,9 @@
       "detailTheme": "Lebensversicherung",
       "tags": [],
       "committee": "LIFE, PENSIONS",
-      "authors": [],
+      "authors": [
+        "Sven Ebert"
+      ],
       "event": "DAV/DGVFM Autumn Meeting 2024",
       "pdfAvailable": true,
       "description": "...",
