@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generatedAt": "2026-11-02T13:08:27Z",
+    "generatedAt": "2026-11-09T13:39:54Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 797,
     "byType": {
       "GitHub-Material": 28,
-      "Richtlinie": 16,
-      "Use Case": 5,
+      "actuview": 469,
       "Ergebnisbericht": 247,
       "Hinweis": 40,
-      "actuview": 469
+      "Richtlinie": 16,
+      "Use Case": 5
     }
   },
   "items": [
