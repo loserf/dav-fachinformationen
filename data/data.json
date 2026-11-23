@@ -1,23 +1,23 @@
 {
   "meta": {
-    "generatedAt": "2026-11-16T13:24:14Z",
+    "generatedAt": "2026-11-23T15:43:31Z",
     "source": "https://aktuar.de/de/wissen/fachinformationen/, https://github.com/DeutscheAktuarvereinigung, https://actuview.com/",
     "totalItems": 798,
     "byType": {
-      "Hinweis": 40,
-      "Richtlinie": 16,
       "GitHub-Material": 28,
-      "Ergebnisbericht": 248,
       "actuview": 469,
-      "Use Case": 5
+      "Hinweis": 40,
+      "Ergebnisbericht": 248,
+      "Use Case": 5,
+      "Richtlinie": 16
     }
   },
   "items": [
     {
       "type": "GitHub-Material",
       "title": "Arbeitsgruppe KI & moderne Methoden in der Krankenversicherung",
-      "date": "15.11.2026",
-      "dateIso": "2026-11-15",
+      "date": "22.11.2026",
+      "dateIso": "2026-11-22",
       "theme": "Actuarial Data Science / AI",
       "detailTheme": "Actuarial Data Science / AI",
       "tags": [],
